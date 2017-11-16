@@ -1,0 +1,7 @@
+a.out
+Test*
+!Test_*
+*.swp
+tags
+*.o
+.vscode
