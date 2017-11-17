@@ -2,8 +2,19 @@
 #define __LINKEDLIST_H__
 #include "Common.h"
 
-typedef struct node* Iterator;
-typedef struct list* LinkedList;
+typedef int ElemType;
+
+typedef struct LLNode{
+	ElemType data;
+	struct LLNode *next;
+}*Link, *Position;
+
+typedef struct{
+	Link head, tail;
+
+	int len;
+}LinkedList;
+
 /**
  * malloc node which valued e and pointed by p
  * @param p  malloc space address
@@ -11,13 +22,13 @@ typedef struct list* LinkedList;
  * @return SUCCESS if malloc success and ERROR if failed
  *
 */
-Status MakeNode(Iterator *p, void *data, int data_size, void (*assign)(void*, void*));
+Status MakeNode(Link *p, ElemType e);
 /**
  * free node which pointed by p
  * @param p  malloc space address
  *
 */
-void FreeNode(Iterator *p);
+void FreeNode(Link *p);
 
 /**
  * make a empty LinkedList L
@@ -25,21 +36,21 @@ void FreeNode(Iterator *p);
  * @return SUCCESS if malloc success and ERROR if failed
  *
 */
-Status InitList(LinkedList *L, int data_size);
+Status InitList(LinkedList *L);
 /**
  * destroy a LinkedList L
  * @param L  LinkedList pointer
  * @return OK if malloc success and ERROR if failed
  *
 */
-Status DestroyList(LinkedList L);
+Status DestroyList(LinkedList *L);
 /**
  * clear a LinkedList L to empty
  * @param L  LinkedList pointer
  * @return OK if malloc success and ERROR if failed
  *
 */
-Status ClearList(LinkedList L);
+Status ClearList(LinkedList *L);
 /**
  * insert a node s to LinkedList head
  * @param L  LinkedList pointer
@@ -47,7 +58,7 @@ Status ClearList(LinkedList L);
  * @return OK if malloc success and ERROR if failed
  *
 */
-Status InsFirst(LinkedList L, Iterator s);
+Status InsFirst(LinkedList *L, Link s);
 /**
  * delete a node s from LinkedList head
  * @param L  LinkedList pointer
@@ -55,7 +66,7 @@ Status InsFirst(LinkedList L, Iterator s);
  * @return OK if malloc success and ERROR if failed
  *
 */
-Status DelFirst(LinkedList L, Iterator *q);
+Status DelFirst(LinkedList *L, Link *q);
 /**
  * append a node s to LinkedList
  * @param L LinkedList pointer
@@ -63,7 +74,7 @@ Status DelFirst(LinkedList L, Iterator *q);
  * @return OK if malloc success and ERROR if failed
  *
 */
-Status Append(LinkedList L, Iterator s);
+Status Append(LinkedList *L, Link s);
 /**
  * remove a node s from LinkedList tail
  * @param L LinkedList pointer
@@ -71,7 +82,7 @@ Status Append(LinkedList L, Iterator s);
  * @return OK if malloc success and ERROR if failed
  *
 */
-Status Remove(LinkedList L, Iterator *q);
+Status Remove(LinkedList *L, Link *q);
 
 /**
  * insert s point LinkedList(not only s node) before p node
@@ -81,7 +92,7 @@ Status Remove(LinkedList L, Iterator *q);
  * @return OK if insert success and ERROR if failed
  *
 */
-Status InsBefore(LinkedList L, Iterator *p, Iterator s);
+Status InsBefore(LinkedList *L, Link *p, Link s);
 /**
  * insert s point LinkedList(not only s node) after p node
  * @param L LinkedList pointer
@@ -90,7 +101,7 @@ Status InsBefore(LinkedList L, Iterator *p, Iterator s);
  * @return OK if insert success and ERROR if failed
  *
 */
-Status InsAfter(LinkedList L, Iterator *p, Iterator s);
+Status InsAfter(LinkedList *L, Link *p, Link s);
 /**
  * set value e for node p
  * @param p a node that will be setted value
@@ -98,14 +109,14 @@ Status InsAfter(LinkedList L, Iterator *p, Iterator s);
  * @return OK if set value success and ERROR if failed
  *
 */
-Status SetCurElem(Iterator p, void *e, void (*assign)(void*,void*));
+Status SetCurElem(Link p, ElemType e);
 /**
  * get value from node p
  * @param p a node that will be got value
  * @return node p value
  *
 */
-void* GetCurElem(Iterator p);
+ElemType GetCurElem(Link p);
 /**
  * judge a LinkedList is empty
  * @param l 
@@ -126,14 +137,14 @@ int ListLength(LinkedList L);
  * @return LinkedList Head Node
  *
 */
-Iterator GetHead(LinkedList L);
+Position GetHead(LinkedList L);
 /**
  * get LinkedList last Node
  * @param L
  * @return LinkedList Head Node
  *
 */
-Iterator GetLast(LinkedList L);
+Position GetLast(LinkedList L);
 /**
  * get node p prior node
  * @param L
@@ -141,34 +152,34 @@ Iterator GetLast(LinkedList L);
  * @return 
  *
 */
-Iterator PriorPos(LinkedList L, Iterator p);
+Position PriorPos(LinkedList L, Link p);
 /**
  * get node p next node
  * @param p
  * @return
  *
 */
-Iterator NextPos(Iterator p);
+Position NextPos(Link p);
 /**
  * @param 
  * @param
  * @param
  * @return 
  */
-Status LocatePos(LinkedList L, int i, Iterator *p);
+Status LocatePos(LinkedList L, int i, Link *p);
 /**
  * @param 
  * @param
  * @param
  * @return 
  */
-Iterator LocateElem(LinkedList L, void *e, Status(*compare)(void *, void *));
+Position LocateElem(LinkedList L, ElemType e, Status(*compare)(ElemType, ElemType));
 /**
  * @param 
  * @param
  * @return 
  */
-Status ListTraverse(LinkedList L, void(*visit)(void *));
+Status ListTraverse(LinkedList L, void(*visit)(ElemType));
 
 
 #endif

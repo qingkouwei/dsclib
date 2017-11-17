@@ -107,9 +107,9 @@ static void testSLList() {
 
 	for (j = 0; j <= 1; j++) {
 		k = LocateSLElem(L, j);
-		if(k){
+		if (k) {
 			printf("value %d elem in list locate is %d\n", j, k);
-		}else{
+		} else {
 			printf("has no elem %d \n", j);
 		}
 	}
@@ -124,12 +124,12 @@ static void testSLList() {
 		}
 	}
 	printf("\n");
-	for(j = SLListLength(L) - 1; j<= SLListLength(L); j++){
+	for (j = SLListLength(L) - 1; j <= SLListLength(L); j++) {
 		GetSLElem(L, j, &e0);
 		status = NextSLElem(L, e0, &e);
-		if(!status){
+		if (!status) {
 			printf("elem %d has no next\n", e0);
-		}else{
+		} else {
 			printf("elem %d next is :%d\n", e0, e);
 		}
 	}
@@ -287,7 +287,7 @@ static void testSqList() {
 	}
 }
 
-void testLinkedList() {
+/*void testLinkedList4Int() {
 	printf("\nstart test linkedlist..\n");
 	Link p, h;
 	LinkedList L;
@@ -372,7 +372,7 @@ void testLinkedList() {
 	printf("current linkedlist datas is : ");
 	ListTraverse(L,visit);
 	printf("\n");
-	printf("first node value is %d, last node value is %d\n", GetCurElem(GetHead(L)->next), 
+	printf("first node value is %d, last node value is %d\n", GetCurElem(GetHead(L)->next),
 		GetCurElem(p));
 	printf("\n");
 	MakeNode(&h, 10);
@@ -382,7 +382,7 @@ void testLinkedList() {
 	MakeNode(&h, 20);
 	h->next = NULL;
 	InsAfter(&L, &p,h);
-	
+
 	printf("current linkedlist is : ");
 	ListTraverse(L, visit);
 	printf("\n\n");
@@ -401,6 +401,158 @@ void testLinkedList() {
 	DestroyList(&L);
 	printf("after destroy list : L.head = %p L.tail = %p, L.len=%d\n",
 		L.head, L.tail, L.len);
+
+}*/
+void assignInt(void *e1, void *e2) {
+	int *p1 = (int *)e1;
+	int *p2 = (int *)e2;
+	*p1 = *p2;
+}
+static void visitInt(void *e) {
+	int *p = (int *)e;
+	printf("%d ", *p);
+}
+static Status compareInt(void* e1, void* e2) {
+	int *p1 = (int *)e1;
+	int *p2 = (int *)e2;
+
+	if (*p1 == *p2) {
+		return TRUE;
+	}
+	return FALSE;
+}
+void testLinkedList() {
+	printf("\nstart test linkedlist..\n");
+	int size = sizeof(int);
+	Iterator p, h;
+	LinkedList L;
+	Status status;
+	int j, k;
+	status = InitList(&L, size);
+	if (!status) {
+		exit(FALSE);
+	}
+	for (j = 1; j <= 5; j++) {
+		MakeNode(&p, &j, size, assignInt);
+		InsFirst(L, p);
+
+	}
+	printf("\nafter insert 5 data, list is:");
+	ListTraverse(L, visitInt);
+	printf("\n\n");
+	for (j = 0; j < 2; j++) {
+		p = LocateElem(L, &j, compareInt);
+		if (p) {
+			printf("linkedlist has elem %d\n", j);
+		} else {
+			printf("linkedlist has no elem %d\n", j);
+		}
+	}
+	printf("\n");
+	for (j = 1; j <= 4; j++) {
+		printf("delete list head: ");
+		DelFirst(L, &p);
+		int *x = (int *)GetCurElem(p);
+		if (p) {
+			printf("%d\n", *x);
+		} else {
+			printf("linkedlist is nul, cannot delete . p = %p\n ", p);
+		}
+	}
+	printf("\nlinkedlist L node count = %d ; L is empty ? %d(1:yes, 0, no)\n", ListLength(L), ListEmpty(L));
+
+	j = 10;
+	MakeNode(&p, &j, size, assignInt);
+	Append(L, p);
+	//p->next = NULL;
+	for (j = 4; j >= 1; j--) {
+		k = j * 2;
+		MakeNode(&h, &k, size, assignInt);
+		Append(L, h);
+		//h->next = p;
+		//p = h;
+	}
+
+	printf("\nlinkedlist nodes is : ");
+	ListTraverse(L, visitInt);
+	printf("\n\n");
+
+	for (j = 1; j <= 2; j++) {
+		k = j * 5;
+		p = LocateElem(L, &k, compareInt);
+		if (p) {
+			printf("linkedlist L has node which value is %d\n", j * 5);
+		} else {
+			printf("linkedlist L has not data which value is %d\n", j * 5);
+		}
+	}
+	printf("\n");
+	for (j = 1; j <= 2; j++) {
+		LocatePos(L, j, &p);
+		h = PriorPos(L, p);
+		int *x = (int *)GetCurElem(p);
+		if (h) {
+			int *y = (int *)GetCurElem(h);
+			printf("%d 's prior is %d. \n", *x, *y);
+		} else {
+			printf("%d has not prior.\n", *x);
+		}
+	}
+
+	printf("\n");
+	k = ListLength(L);
+	for (j = k - 1; j <= k; j++) {
+		LocatePos(L, j, &p);
+		h = NextPos(p);
+		int *x = (int *)GetCurElem(p);
+		if (h) {
+			int *y = (int *)GetCurElem(h);
+			printf("%d 's next is %d. \n", *x, *y);
+		} else {
+			printf("%d has no next. \n", *x);
+		}
+	}
+	printf("\n");
+	p = GetLast(L);
+	j = 15;
+	SetCurElem(p, &j, assignInt);
+	printf("current linkedlist datas is : ");
+	ListTraverse(L, visitInt);
+	printf("\n");
+	int *a = GetCurElem(NextPos(GetHead(L)));
+	int *b = GetCurElem(p);
+	printf("first node value is %d, last node value is %d\n", *a,*b);
+	printf("\n");
+	j = 10;
+	MakeNode(&h, &j, size, assignInt);
+	//h->next = NULL;
+	InsBefore(L, &p, h);
+	//p = p->next;
+	j = 20;
+	MakeNode(&h, &j, size, assignInt);
+	//h->next = NULL;
+	InsAfter(L, &p, h);
+
+	printf("current linkedlist is : ");
+	ListTraverse(L, visitInt);
+	printf("\n\n");
+	k = ListLength(L);
+	printf("delete form tail:\n");
+	for (j = 0; j < k; j++) {
+		status = Remove(L, &p);
+		if (!status) {
+			printf("delete failed!\n");
+		} else {
+			int *x = (int *)GetCurElem(p);
+			printf("delete %d\n", *x);
+		}
+	}
+	j = 29;
+	MakeNode(&p, &j, size, assignInt);
+	InsFirst(L, p);
+	DestroyList(L);
+	printf("\nafter destroy list : L.head = %p L.tail = %p, L.len=%d\n",
+	       GetHead(L), GetLast(L), ListLength(L));
 
 }
 int main(int argc, char *argv[]) {

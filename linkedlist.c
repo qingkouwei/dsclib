@@ -1,111 +1,135 @@
 #include "linkedlist.h"
 #include <stdio.h>
-Status MakeNode(Link *p, ElemType e){
-	*p = (Link)malloc(sizeof(struct LLNode));
+
+typedef struct node{
+	void* data;
+	struct node *next;
+}Node;
+
+struct list{
+	Iterator head, tail;
+	int data_size;//elem size 
+	int len;
+};
+
+Status MakeNode(Iterator *p, void *data, int data_size,void (*assign)(void*, void*)){
+	*p = (Iterator)malloc(sizeof(struct node));
 	if(!*p){
 		return OVERFLOW;
 	}
-	(*p)->data = e;
+	(*p)->data = malloc(data_size);
+	assign((*p)->data,data);
 	(*p)->next = NULL;
 	return OK;
 }
-void FreeNode(Link *p){
+void FreeNode(Iterator *p){
+	free((*p)->data);
 	free(*p);
 	*p = NULL;
 }
 
 
-Status InitList(LinkedList *L){
-	Link head;
-	head = (Link)malloc(sizeof(struct LLNode));
+Status InitList(LinkedList *L, int data_size){
+
+	LinkedList list = (LinkedList)malloc(sizeof(struct list));
+	if(!list){
+		return OVERFLOW;
+	}
+	printf("list:%p\n", list);
+	*L = list;
+	printf("L: %p\n", L);
+	Iterator head;
+	head = (Iterator)malloc(sizeof(struct node));
 	if(head){
 		head->next = NULL;
-		L->len = 0;
-		L->head=L->tail=head;
+		head->data = NULL;
+		(*L)->len = 0;
+		(*L)->data_size=data_size;
+		(*L)->head=(*L)->tail=head;
 		return OK;
 	}else{
 		return OVERFLOW;
 	}
 }
-Status DestroyList(LinkedList *L){
+Status DestroyList(LinkedList L){
 	ClearList(L);
-	FreeNode(&(*L).head);
-	(*L).tail = NULL;
-	(*L).len = 0;
+	FreeNode(&L->head);
+	L->tail = NULL;
+	L->len = 0;
 	return OK;
 }
-Status ClearList(LinkedList *L){
-	Link p, q;
-	if((*L).head != (*L).tail){
-		p = (*L).head->next;
-		(*L).head->next = NULL;
-		while(p != (*L).tail){
+Status ClearList(LinkedList L){
+	Iterator p, q;
+	if(L->head != L->tail){
+		p = L->head->next;
+		L->head->next = NULL;
+		while(p != L->tail){
 			q = p->next;
 			FreeNode(&p);
 			p = q;
 		}
-		(*L).len = 0;
-		(*L).tail = (*L).head;
+		L->len = 0;
+		L->tail = L->head;
 	}
 	return OK;
 }
-Status InsFirst(LinkedList *L, Link s){
-	Link p = (*L).head->next;
-	(*L).head->next = s;
+Status InsFirst(LinkedList L, Iterator s){
+	Iterator p = L->head->next;
+	L->head->next = s;
 	int i =1;
 	while(s->next){
 		s = s->next;
 		i++;
 	}
-	(*L).len+=i;
+	L->len+=i;
 	s->next = p;
-	if((*L).head == (*L).tail){
-		(*L).tail = s;
+	if(L->head == L->tail){
+		L->tail = s;
 	}
 	return OK;
 }
-Status DelFirst(LinkedList *L, Link *q){
-	Link h = (*L).head;
+Status DelFirst(LinkedList L, Iterator *q){
+	Iterator h = L->head;
 	*q = h->next;
 	if(*q){
 		h->next = (*q)->next;
 		if(!h->next){
-			(*L).tail = h;
+			L->tail = h;
 		}
-		(*L).len--;
+		L->len--;
 		return OK;
 	}else{
 		return ERROR;
 	}
 }
-Status Append(LinkedList *L, Link s){
-	(*L).tail->next = s;
+Status Append(LinkedList L, Iterator s){
+	L->tail->next = s;
 	int i = 1;
 	while(s->next){
 		s = s->next;
 		i++;
 	}
-	(*L).tail = s;
-	(*L).len+=i;
+	L->tail = s;
+	L->len+=i;
 	return OK;
 }
-Status Remove(LinkedList *L, Link *q){
-	*q = (*L).tail;
+Status Remove(LinkedList L, Iterator *q){
+	*q = L->tail;
 	if(!*q){
 		return ERROR;
 	}else{
-		Link p = (*L).head;
+		Iterator p = L->head;
 		while(p->next != *q){
 			p = p->next;
 		}
 		p->next = NULL;
-		(*L).tail = p;
-		(*L).len--;
+		L->tail = p;
+		L->len--;
 		return OK;
 	}
 }
-Status InsBefore(LinkedList *L, Link *p, Link s){
-	Link q = PriorPos(*L, *p);
+Status InsBefore(LinkedList L, Iterator *p, Iterator s){
+	Iterator q = PriorPos(L, *p);
 	if(!q){
 		return ERROR;
 	}
@@ -117,7 +141,7 @@ Status InsBefore(LinkedList *L, Link *p, Link s){
 		i++;
 	}
 	q->next = *p;
-	(*L).len +=i;
+	L->len +=i;
 	return OK;
 	/*if(*p == NULL){
 		return ERROR;
@@ -143,8 +167,9 @@ Status InsBefore(LinkedList *L, Link *p, Link s){
 	}
 	return OK;*/
 }
-Status InsAfter(LinkedList *L, Link *p, Link s){
-	Link q = *p;
+Status InsAfter(LinkedList L, Iterator *p, Iterator s){
+	Iterator q = *p;
+	Iterator next = (*p)->next;
 	if(!q){
 		return ERROR;
 	}
@@ -155,62 +180,62 @@ Status InsAfter(LinkedList *L, Link *p, Link s){
 		s = s->next;
 		i++;
 	}
-	q->next = (*p)->next;
-	(*L).len += i;
-	if(*p == (*L).tail){
-		(*L).tail = q;
+	q->next = next;
+	L->len += i;
+	if(*p == L->tail){
+		L->tail = q;
 	}
 	return OK;
 }
-Status SetCurElem(Link p, ElemType e){
-	p->data = e;
+Status SetCurElem(Iterator p, void *e, void (*assign)(void*, void*)){
+	assign(p->data, e);
 	return OK;
 }
-ElemType GetCurElem(Link p){
+void* GetCurElem(Iterator p){
 	return p->data;
 }
 Status ListEmpty(LinkedList L){
-	if(L.len == 0){
+	if(L->len == 0){
 		return TRUE;
 	}else{
 		return FALSE;
 	}
 }
 int ListLength(LinkedList L){
-	return L.len;
+	return L->len;
 
 }
-Position GetHead(LinkedList L){
-	return L.head;
+Iterator GetHead(LinkedList L){
+	return L->head;
 }
-Position GetLast(LinkedList L){
-	return L.tail;
+Iterator GetLast(LinkedList L){
+	return L->tail;
 }
-Position PriorPos(LinkedList L, Link p){
-	Link h = L.head->next;
+Iterator PriorPos(LinkedList L, Iterator p){
+	Iterator h = L->head->next;
 	while(h && h->next != p){
 		h = h->next;
 	}
 	return h;
 }
-Position NextPos(Link p){
+Iterator NextPos(Iterator p){
 	return p->next;
 }
-Status LocatePos(LinkedList L, int i, Link *p){
-	if(i < 0 && i > L.len){//i==0 is Head Node
+Status LocatePos(LinkedList L, int i, Iterator *p){
+	if(i < 0 && i > L->len){//i==0 is Head Node
 		*p = NULL;
 		return ERROR;
 	}
 	int j = 1;
-	*p = L.head;
+	*p = L->head;
 	while(j <=i){
 		*p = (*p)->next;
 		j++;
 	}
 	return OK;
 }
-Position LocateElem(LinkedList L, ElemType e, Status(*compare)(ElemType, ElemType)){
-	Link p = L.head->next;
+Iterator LocateElem(LinkedList L, void *e, Status(*compare)(void*, void*)){
+	Iterator p = L->head->next;
 	while(p){
 		if(compare(p->data, e)){
 			return p;
@@ -219,8 +244,8 @@ Position LocateElem(LinkedList L, ElemType e, Status(*compare)(ElemType, ElemTyp
 	}
 	return p;
 }
-Status ListTraverse(LinkedList L, void(*visit)(ElemType)){
-	Link p = L.head->next;
+Status ListTraverse(LinkedList L, void(*visit)(void *)){
+	Iterator p = L->head->next;
 	while(p){
 		visit(p->data);
 		p = p->next;
