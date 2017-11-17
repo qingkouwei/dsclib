@@ -109,7 +109,7 @@ Status InsAfter(LinkedList *L, Link *p, Link s);
  * @return OK if set value success and ERROR if failed
  *
 */
-Status SetCurElem(Link *p, ElemType e);
+Status SetCurElem(Link p, ElemType e);
 /**
  * get value from node p
  * @param p a node that will be got value
@@ -179,7 +179,7 @@ Position LocateElem(LinkedList L, ElemType e, Status(*compare)(ElemType, ElemTyp
  * @param
  * @return 
  */
-Status ListTraverse(LinkedList L, Status(*visit)(ElemType));
+Status ListTraverse(LinkedList L, void(*visit)(ElemType));
 
 
 #endif

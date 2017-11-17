@@ -20,7 +20,7 @@ start:$(OBJS_TEST_SORT) $(OBJS_TEST_LIST)
 	$(CC) -o $(EXERC_TEST_LIST) $(OBJS_TEST_LIST)
 	@echo ---------------SUCCESS----------------
 .c.o:
-	$(CC) -o $@ -c $<
+	$(CC) -g -o $@ -c $<
 clean: 
 	rm -rf $(OBJS_TEST_SORT) $(EXERC_TEST_SORT)
 	rm -rf $(OBJS_TEST_LIST) $(EXEC_TEST_LIST)

@@ -1,11 +1,12 @@
 #include "linkedlist.h"
-
+#include <stdio.h>
 Status MakeNode(Link *p, ElemType e){
 	*p = (Link)malloc(sizeof(struct LLNode));
 	if(!*p){
 		return OVERFLOW;
 	}
 	(*p)->data = e;
+	(*p)->next = NULL;
 	return OK;
 }
 void FreeNode(Link *p){
@@ -144,6 +145,9 @@ Status InsBefore(LinkedList *L, Link *p, Link s){
 }
 Status InsAfter(LinkedList *L, Link *p, Link s){
 	Link q = *p;
+	if(!q){
+		return ERROR;
+	}
 	int i = 0;
 	while(s){
 		q->next = s;
@@ -158,8 +162,8 @@ Status InsAfter(LinkedList *L, Link *p, Link s){
 	}
 	return OK;
 }
-Status SetCurElem(Link *p, ElemType e){
-	(*p)->data = e;
+Status SetCurElem(Link p, ElemType e){
+	p->data = e;
 	return OK;
 }
 ElemType GetCurElem(Link p){
@@ -183,7 +187,7 @@ Position GetLast(LinkedList L){
 	return L.tail;
 }
 Position PriorPos(LinkedList L, Link p){
-	Link h = L.head;
+	Link h = L.head->next;
 	while(h && h->next != p){
 		h = h->next;
 	}
@@ -215,7 +219,7 @@ Position LocateElem(LinkedList L, ElemType e, Status(*compare)(ElemType, ElemTyp
 	}
 	return p;
 }
-Status ListTraverse(LinkedList L, Status(*visit)(ElemType)){
+Status ListTraverse(LinkedList L, void(*visit)(ElemType)){
 	Link p = L.head->next;
 	while(p){
 		visit(p->data);
