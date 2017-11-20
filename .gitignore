@@ -5,3 +5,5 @@ Test*
 tags
 *.o
 .vscode
+objs
+.DS_Store

@@ -10,6 +10,15 @@ typedef int ElemType;
 #include <getopt.h>
 #include <string.h>
 
+#include <signal.h>  
+#include <execinfo.h>  
+#include <sys/types.h>  
+#include <sys/stat.h>  
+#include <fcntl.h>  
+#include <unistd.h>  
+
+
+
 static enum {
 	SqListT, LListT, SLListT, DuLListT, CLListT, LinkedListT
 } listType = LinkedListT;
@@ -26,6 +35,26 @@ Status compare2(ElemType e1, ElemType e2) {
 	}
 	return FALSE;
 }
+
+static void SignalHandle(int sig)  
+{  
+    void *array[20];  
+    size_t size;  
+    char **strings;  
+    int i;  
+    size = backtrace(array, 10);  
+    strings = backtrace_symbols(array, size);  
+    printf("SIGNAL ocurre %d, stack tarce:\n", sig);  
+    printf("obtained %zu stack frames.\n", size);  
+  
+    for (i = 0; i < size; i++)  
+        printf("%s\n", array[i]);  
+  
+    free(strings);  
+    printf("stack trace over!\n");  
+    exit(0);  
+}  
+
 
 static void usage(char * argv[]) {
 	printf("Usage %s [Options]\n"
@@ -425,6 +454,10 @@ void testLinkedList() {
 	printf("\nstart test linkedlist..\n");
 	int size = sizeof(int);
 	Iterator p, h;
+
+	/*LinkedList *list;
+	InsFirst(*list, p);*/
+
 	LinkedList L;
 	Status status;
 	int j, k;
@@ -556,6 +589,7 @@ void testLinkedList() {
 
 }
 int main(int argc, char *argv[]) {
+	signal(SIGSEGV, SignalHandle);
 	static const struct option longOptions[] = {
 		{"help",         no_argument,        NULL,      'h'},
 		{"type",         required_argument,  NULL,      't'},
