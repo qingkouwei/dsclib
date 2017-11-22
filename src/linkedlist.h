@@ -42,20 +42,51 @@ Status DestroyList(LinkedList L);
 Status ClearList(LinkedList L);
 /**
  * insert a node s to LinkedList head
+ * h指向L的一个节点,把h当做头结点,将s所指节点插入在第一个结点之前
+ * 
  * @param L  LinkedList pointer
  * @param s node to be inserted  
  * @return OK if malloc success and ERROR if failed
  *
 */
-Status InsFirst(LinkedList L, Iterator s);
+Status InsFirstH(LinkedList L, Iterator h, Iterator s);
 /**
  * delete a node s from LinkedList head
+ * h指向L的一个节点,把h当做头结点,删除链表中第一个结点并以返回
+ * 
  * @param L  LinkedList pointer
  * @param q a pointer that pointe to has deleted node
  * @return OK if malloc success and ERROR if failed
  *
 */
-Status DelFirst(LinkedList L, Iterator *q);
+Status DelFirstH(LinkedList L, Iterator h, Iterator *q);
+/**
+ * append a node s to LinkedList
+ * @param L LinkedList pointer
+ * @param s node to be inserted 
+ * @return OK if malloc success and ERROR if failed
+ *
+*/
+/**
+ * insert a node s to LinkedList head
+ * h指向L的一个节点,把h当做头结点,将s所指节点插入在第一个结点之前
+ * 
+ * @param L  LinkedList pointer
+ * @param s node to be inserted  
+ * @return OK if malloc success and ERROR if failed
+ *
+*/
+Status InsFirst(LinkedList L,Iterator s);
+/**
+ * delete a node s from LinkedList head
+ * h指向L的一个节点,把h当做头结点,删除链表中第一个结点并以返回
+ * 
+ * @param L  LinkedList pointer
+ * @param q a pointer that pointe to has deleted node
+ * @return OK if malloc success and ERROR if failed
+ *
+*/
+Status DelFirst(LinkedList L,Iterator *q);
 /**
  * append a node s to LinkedList
  * @param L LinkedList pointer
@@ -120,6 +151,7 @@ Status ListEmpty(LinkedList L);
  *
 */
 int ListLength(LinkedList L);
+void setListLength(LinkedList L, int len);
 /**
  * get LinkedList Head Node
  * @param L
@@ -127,6 +159,7 @@ int ListLength(LinkedList L);
  *
 */
 Iterator GetHead(LinkedList L);
+Status SetHead(LinkedList L, Iterator p);
 /**
  * get LinkedList last Node
  * @param L
@@ -134,6 +167,7 @@ Iterator GetHead(LinkedList L);
  *
 */
 Iterator GetLast(LinkedList L);
+Status SetTail(LinkedList L, Iterator p);
 /**
  * get node p prior node
  * @param L
@@ -169,6 +203,21 @@ Iterator LocateElem(LinkedList L, void *e, Status(*compare)(void *, void *));
  * @return 
  */
 Status ListTraverse(LinkedList L, void(*visit)(void *));
+
+/**
+ * 已知L为有序线性链表,将元素e按非降序插入在L中.(用于一元多项式)
+ * 
+ */
+Status OrderInsert(LinkedList L, Iterator s, int (*comp)(void *, void *));
+
+/**
+ * 若升序链表L中存在与e满足判定函数compare()取值为0的元素,则q指示L中
+ * 第一个值为e的结点的位置,并放回TRUE;否则q指示第一个与e满足判定函数compare()
+ * 取值>0的元素的前驱的位置.
+ * 
+ * 
+ */
+Status LocateElemP(LinkedList L, void *e, Iterator *q, int(*compare)(void*, void*));
 
 
 #endif

@@ -7,17 +7,22 @@
 typedef struct {
 	float coef;
 	int expn;
-}ElemType;
+}term;
 
 
-typedef LinkList polynomial;
+typedef LinkedList polynomial;
 
-void CreatePolyn(polynomial &P, int m);
-void DestroyPolyn(polynomial &P);
+void assignTerm(void *e1, void *e2);
+Status OrderInsertMerge(polynomial *P, term e, int(*compare)(void*, void*));
+void Opposite(polynomial Pa);
+
+void CreatePolyn(polynomial *P, int m);
+void DestroyPolyn(polynomial *P);
 void PrintPolyn(polynomial P);
 int PolynLength(polynomial P);
-void AddPolyn(polynomial &Pa, polynomial &pb);
-void SubtractPolyn(polynomial &Pa, polynomial &Pb);
-void MultiplyPolyn(polynomial &Pa, polynomial &Pb);
+void AddPolyn(polynomial *Pa, polynomial *pb);
+void AddPolyn2(polynomial *Pa, polynomial *pb);
+void SubtractPolyn(polynomial *Pa, polynomial *Pb);
+void MultiplyPolyn(polynomial *Pa, polynomial *Pb);
 
 #endif

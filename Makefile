@@ -15,7 +15,8 @@ SRCS_TEST_LIST=$(SRCPATH)/Common.c \
 	$(SRCPATH)/llist.c\
 	$(SRCPATH)/sllist.c\
 	$(SRCPATH)/linkedlist.c\
-	$(SRCPATH)/Test_List.c
+	$(SRCPATH)/Test_List.c\
+	$(SRCPATH)/polynomial.c
 
 #OBJS_TEST_LIST=$(SRCS_TEST_LIST:.c=.o)
 OBJS_TEST_LIST=$(patsubst src/%.c,$(OUTPATH)/%.o,$(SRCS_TEST_LIST))

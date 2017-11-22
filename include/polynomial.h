@@ -7,7 +7,7 @@
 typedef struct {
 	float coef;
 	int expn;
-}ElemType;
+}term;
 
 
 typedef LinkList polynomial;

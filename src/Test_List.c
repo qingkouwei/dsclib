@@ -2,6 +2,7 @@
 #include "llist.h"
 #include "sllist.h"
 #include "linkedlist.h"
+#include "polynomial.h"
 
 typedef int ElemType;
 
@@ -20,7 +21,7 @@ typedef int ElemType;
 
 
 static enum {
-	SqListT, LListT, SLListT, DuLListT, CLListT, LinkedListT
+	SqListT, LListT, SLListT, DuLListT, CLListT, LinkedListT, PolyT
 } listType = LinkedListT;
 
 Status compare(ElemType e1, ElemType e2) {
@@ -48,7 +49,7 @@ static void SignalHandle(int sig)
     printf("obtained %zu stack frames.\n", size);  
   
     for (i = 0; i < size; i++)  
-        printf("%s\n", array[i]);  
+        printf("%s\n", strings[i]);  
   
     free(strings);  
     printf("stack trace over!\n");  
@@ -73,6 +74,7 @@ static void usage(char * argv[]) {
 	       "DuLList: double linked list.\n"
 	       "CLList: circular linked list.\n"
 	       "LinkedList: a functional linkedlist.\n"
+	       "Poly: polynomial operation test."
 	       "\n"
 	       "For example:\n"
 	       " %s --type SqList\n",
@@ -588,6 +590,45 @@ void testLinkedList() {
 	       GetHead(L), GetLast(L), ListLength(L));
 
 }
+#define TEST_MUltiply
+static void testPoly(){
+	polynomial p,q;
+	int m;
+	printf("please first polynomial term num:\n");
+	scanf("%d",&m);
+	CreatePolyn(&p, m);
+	printf("p is :\n");
+	PrintPolyn(p);
+	printf("please second polynomial term num:\n");
+	scanf("%d", &m);
+	CreatePolyn(&q, m);
+#ifndef TEST_MUltiply
+	AddPolyn(&p, &q);
+	printf("\nafter add :\n");
+	PrintPolyn(p);
+	printf("please third polynomial term num:\n");
+	scanf("%d", &m);
+	CreatePolyn(&q, m);
+	AddPolyn(&p, &q);
+	printf("\nafter add2 :\n");
+	PrintPolyn(p);
+	printf("please 4th polynomial term num:\n");
+	scanf("%d", &m);
+	CreatePolyn(&q, m);
+	SubtractPolyn(&p, &q);
+	printf("\nafter SubtractPolyn :\n");
+	PrintPolyn(p);
+	printf("please 5th polynomial term num:\n");
+	scanf("%d", &m);
+	CreatePolyn(&q, m);
+#endif
+	MultiplyPolyn(&p, &q);
+	printf("\nafter MultiplyPolyn :\n");
+	PrintPolyn(p);
+	DestroyPolyn(&p);
+
+
+}
 int main(int argc, char *argv[]) {
 	signal(SIGSEGV, SignalHandle);
 	static const struct option longOptions[] = {
@@ -624,7 +665,9 @@ int main(int argc, char *argv[]) {
 				listType = CLListT;
 			} else if (strcmp(optarg, "LinkedList") == 0) {
 				listType = LinkedListT;
-			} else {
+			} else if(strcmp(optarg, "Poly") == 0){
+				listType = PolyT;
+			}else {
 				printf("unsupported list type: %s !!!\n", optarg);
 				return 2;
 			}
@@ -656,6 +699,9 @@ int main(int argc, char *argv[]) {
 		break;
 	case LinkedListT:
 		testLinkedList();
+		break;
+	case PolyT:
+		testPoly();
 		break;
 	}
 
